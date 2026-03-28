@@ -1,15 +1,21 @@
 package com.altezza.ui;
 
+import com.altezza.model.AppSettings;
+import com.altezza.service.RomScanService;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 public class PlayTabView extends VBox {
 
-    public PlayTabView() {
+    private final ComboBox<String> romCombo = new ComboBox<>();
+    private final RomScanService romScanService = new RomScanService();
+
+    public PlayTabView(AppSettings settings) {
         setSpacing(12);
         setPadding(new Insets(16));
 
@@ -24,7 +30,6 @@ public class PlayTabView extends VBox {
         emulatorCombo.getItems().add("mGBA");
         emulatorCombo.getSelectionModel().selectFirst();
 
-        ComboBox<String> romCombo = new ComboBox<>();
         romCombo.setPromptText("Select ROM");
 
         ComboBox<String> profileCombo = new ComboBox<>();
@@ -33,11 +38,23 @@ public class PlayTabView extends VBox {
         Button playButton = new Button("Play");
         playButton.setDisable(true);
 
+        Button refreshButton = new Button("Refresh");
+        refreshButton.setOnAction(event -> reloadRomList(settings));
+
         form.addRow(0, new Label("Emulator:"), emulatorCombo);
         form.addRow(1, new Label("ROM:"), romCombo);
         form.addRow(2, new Label("Save/Profile:"), profileCombo);
-        form.add(playButton, 1, 3);
+
+        HBox actions = new HBox(8, refreshButton, playButton);
+        form.add(actions, 1, 3);
 
         getChildren().addAll(title, form);
+
+        reloadRomList(settings);
+    }
+
+    private void reloadRomList(AppSettings settings) {
+        romCombo.getItems().setAll(romScanService.scanRomNames(settings));
+        romCombo.getSelectionModel().clearSelection();
     }
 }
