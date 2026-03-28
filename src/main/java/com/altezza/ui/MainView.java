@@ -12,7 +12,7 @@ public class MainView extends BorderPane {
     public MainView(AppSettings settings, Consumer<AppSettings> onSaveSettings) {
         TabPane tabPane = new TabPane();
 
-        Tab playTab = new Tab("Play", new PlayTabView());
+        Tab playTab = new Tab("Play", new PlayTabView(settings));
         playTab.setClosable(false);
 
         Tab settingsTab = new Tab("Settings", new SettingsTabView(settings, onSaveSettings));
